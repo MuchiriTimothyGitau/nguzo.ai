@@ -28,10 +28,24 @@ ENV/
 *.ipynb_checkpoints
 
 # Data & models (large/binary)
-data/
+# Keep small sample corpora in the repo; ignore heavy artifacts.
+data/raw/
+data/processed/
+data/models/
+data/tokenizers/
+data/*.wav
+data/*.mp3
+data/*.pt
+data/*.pth
+data/*.bin
+data/*.ckpt
+data/*.safetensors
+data/*.parquet
+data/*.tar
+data/*.tar.gz
+data/*.zip
+data/*.xz
 models/
-*.wav
-*.mp3
 *.pt
 *.pth
 *.bin

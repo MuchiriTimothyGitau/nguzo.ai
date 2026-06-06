@@ -417,8 +417,8 @@ SWAHILI_CONFIG = LanguageTokenizerConfig(
     vowels='aeiou',
     consonants='bcdfghjklmnpqrstvwxyz',
     
-    # Arabic influence
-    special_characters=['],
+    # Arabic influence (Swahili uses Arabic script loans in some orthographies)
+    special_characters=[],
     
     vocab_size=48000,  # Larger due to more data
 )

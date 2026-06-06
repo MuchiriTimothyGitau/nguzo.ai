@@ -1,13 +1,27 @@
 # Nguzo.ai
 
-> Bridging the language barrier for African languages - end-to-end platform combining an AI-powered web app with an ethical ML training pipeline.
+> A research programme investigating whether low-resource African languages
+> are served better by language models that incorporate explicit linguistic
+> priors, rather than by scale alone.  This repository is a unified
+> combination of the web application, the ML pipeline, and the supporting
+> research artifacts.
 
-This repository is a unified merge of two complementary projects under the Nguzo.ai umbrella:
+---
 
-| Source | Description |
-|---|---|
-| `nguzo.ai--Language-Barrier-Bridge-` | AI Studio web app (TypeScript / React / Vite) |
-| `nguzo.ai` | Python ML pipeline + Hadithi web app + documentation |
+## What's in this repo
+
+| Source | What it is | Where it lives |
+|---|---|---|
+| `nguzo.ai--Language-Barrier-Bridge-` | AI Studio TypeScript/React web app | root (`src/`, `server.ts`, `vite.config.ts`, ...) |
+| `nguzo.ai` (Python side) | ML pipeline + Hadithi web app | `ml/`, `notebooks/`, `hadithi-app/`, `docs/` |
+| **Research artifacts (new)** | Scope-1 controlled tokenizer experiment, tests, results | `ml/`, `tests/`, `results/`, `RESEARCH.md` |
+
+**The research artefact is the centerpiece** - see **[`RESEARCH.md`](RESEARCH.md)**
+for the research question, method, results, threats to validity, and the
+Scope-2 plan.  Headline result: a linguistically-informed BPE tokenizer
+trained on Swahili-specific atomic chunks achieves **93% vocabulary coverage
+of the targeted chunks** versus **50% for a vanilla BPE** with the same data
+and vocabulary size.
 
 ---
 
@@ -15,30 +29,33 @@ This repository is a unified merge of two complementary projects under the Nguzo
 
 ```
 nguzo.ai/
-├── src/                  # Root web app (TypeScript/React) - from Language-Barrier-Bridge
-├── assets/               # Static assets for the root web app
+├── src/                  # Root web app (TypeScript/React)
+├── assets/               # Static assets
 ├── index.html            # Root web app entry
-├── package.json          # Root web app dependencies
-├── server.ts             # Express + tsx dev server
-├── tsconfig.json
+├── package.json          # Root web app deps
+├── server.ts             # Express dev server
+├── tsconfig.json         # TypeScript config (excludes hadithi-app, ml/)
 ├── vite.config.ts
 ├── metadata.json
 ├── .env.example
 │
-├── hadithi-app/          # Hadithi web app (Vite + React) - from nguzo.ai
-│   ├── src/
-│   │   ├── components/   # Layout, LughaMojaKnowledgeMap
-│   │   └── pages/        # Home, Languages, Stories, Record, About
+├── hadithi-app/          # Hadithi Vite/React app
+│   ├── src/{components,pages}/
 │   ├── index.html
 │   ├── tailwind.config.js
 │   └── vite.config.ts
 │
-├── ml/                   # Python ML modules (renamed from src/ to avoid path conflict)
-│   ├── data-integration.py
-│   ├── east-african-tokenizer-config.py
-│   └── text-preprocessing.py
+├── ml/                   # Python ML modules
+│   ├── data_acquisition.py            # Fetch small Swahili corpus
+│   ├── data-integration.py            # Multi-source East-African data registry
+│   ├── east-african-tokenizer-config.py  # Linguistic configs for 15 Bantu langs
+│   ├── east_african_tokenizer_compat.py  # Import shim (dashes in filename)
+│   ├── text-preprocessing.py          # Whisper + African-text normalization
+│   ├── metrics.py                     # Tokenization efficiency metrics
+│   ├── benchmark_tokenizer.py         # The Scope-1 experiment
+│   └── __init__.py
 │
-├── notebooks/            # Jupyter notebooks - ML training pipeline
+├── notebooks/            # Original 5-stage pipeline (Colab-only, needs torch)
 │   ├── 01_data_collection.ipynb
 │   ├── 02_audio_processing.ipynb
 │   ├── 03_text_preprocessing.ipynb
@@ -49,180 +66,140 @@ nguzo.ai/
 │   ├── east-african-bantu-languages.md
 │   └── ethical-guidelines.md
 │
-├── contributing.md       # Contribution guidelines
-├── guide.md              # Full implementation guide
-├── PROJECT_STRUCTURE.md  # ML pipeline structure overview
-├── requirements.txt      # Python dependencies
-└── README.md             # This file
+├── tests/                # Pytest test suite (35 tests)
+│   ├── test_benchmark.py
+│   ├── test_data_acquisition.py
+│   ├── test_metrics.py
+│   └── test_tokenizer_configs.py
+│
+├── results/              # Generated benchmark outputs
+│   ├── tokenizer_benchmark.json
+│   └── tokenizer_benchmark.md
+│
+├── data/                 # Small sample corpora (committed); larger data gitignored
+│   └── swahili_corpus.txt
+│
+├── RESEARCH.md           # The research writeup (READ THIS)
+├── colab_runner.ipynb    # One-click Colab reproduction
+├── requirements.txt      # Full pipeline deps (torch, whisper, ...)
+├── requirements-lock.txt # Pinned research-profile deps
+├── guide.md              # Full implementation guide (Colab)
+├── PROJECT_STRUCTURE.md  # ML pipeline structure
+├── contributing.md
+├── readme.md             # (legacy) original repo readme, kept for reference
+└── _repo2_readme.md      # (legacy) preserved original readme from nguzo.ai
 ```
 
 ---
 
-## 1. Root web app (Language Barrier Bridge)
+## How to run things
 
-A Vite + React + TypeScript app originally generated from Google AI Studio, with an Express server and Gemini API integration.
+### Option A: Reproduce the research artefact (CPU only, < 30 s)
 
-### Run locally
+```bash
+pip install -r requirements-lock.txt
+python -m pytest tests/                  # 35 tests, should all pass
+python ml/data_acquisition.py            # writes data/swahili_corpus.txt
+python ml/benchmark_tokenizer.py         # writes results/tokenizer_benchmark.{json,md}
+```
 
-**Prerequisites:** Node.js
+Then read [`RESEARCH.md`](RESEARCH.md) and inspect
+`results/tokenizer_benchmark.md`.
+
+### Option B: Run the root web app (Node)
 
 ```bash
 npm install
-cp .env.example .env.local   # then set your GEMINI_API_KEY
-npm run dev                  # starts the Express + Vite dev server
+copy .env.example .env.local             # set GEMINI_API_KEY
+npm run dev                              # http://localhost:5173 (via Express in server.ts)
 ```
 
-### Build & start (production)
-
-```bash
-npm run build
-npm start
-```
-
-### Stack
-
-- React 19 + Vite 6
-- Tailwind CSS 4 (via `@tailwindcss/vite`)
-- `@google/genai` for Gemini API access
-- Express + `tsx` for the dev/prod server
-- `motion` for animations, `lucide-react` for icons
-
----
-
-## 2. Hadithi web app
-
-A second, content-focused Vite + React + Tailwind app with pages for Home, Languages, Stories, Recording, and About, plus a knowledge-map component.
-
-### Run locally
+### Option C: Run the Hadithi web app (Node)
 
 ```bash
 cd hadithi-app
 npm install
-npm run dev
+npm run dev                              # http://localhost:3000
 ```
 
-See `hadithi-app/README.md` for details.
+### Option D: Full ML pipeline (Google Colab, GPU)
+
+Open `colab_runner.ipynb` in Colab with a GPU runtime.  Uncomment the
+"step 4" cell to execute notebooks 01-05 in sequence.  This is the
+6-48-hour path; see `guide.md` for details.
 
 ---
 
-## 3. Python ML pipeline
+## What's "ready to be displayed as research work"?
 
-A 5-stage Jupyter pipeline for collecting, processing, and training language models on African oral-language data with proper tonal representation, Mandombe script support, and ethical consent.
-
-### Quick start
-
-**Prerequisites:** Python 3.8+, GPU recommended (Google Colab free tier works)
-
-```bash
-pip install -r requirements.txt
-jupyter notebook notebooks/01_data_collection.ipynb
-```
-
-### Pipeline stages
-
-1. **Data Collection** (`01_data_collection.ipynb`) - Ethical audio recording with consent
-2. **Audio Processing** (`02_audio_processing.ipynb`) - Tonal feature extraction (F0, formants, VAD)
-3. **Text Preprocessing** (`03_text_preprocessing.ipynb`) - Transcription & normalization (Mandombe + Latin scripts)
-4. **Tokenizer Training** (`04_tokenizer_training.ipynb`) - Custom BPE, ~50% token reduction
-5. **Model Pretraining** (`05_model_pretraining.ipynb`) - GPT-style LM training (5M-350M params)
-
-### Standalone Python modules (`ml/`)
-
-```bash
-# List available East African Bantu languages
-python ml/data-integration.py --list
-
-# Download data for specific languages
-python ml/data-integration.py --language swa kik lug
-```
-
-### Key features
-
-- **Tonal language support** - Pitch extraction for tone-bearing languages (Yoruba, Kikongo, etc.)
-- **Mandombe script** - Unicode U+1E800-U+1E8DF support
-- **Ethical framework** - Community consent, data sovereignty, attribution
-- **Efficient tokenization** - 50% fewer tokens vs standard BPE
-- **Multiple model sizes** - 5M / 40M / 125M / 350M parameters
-
-### Resource requirements
-
-| Model Size | Params | VRAM  | Training Time | Est. Cost |
-|------------|--------|-------|---------------|-----------|
-| Tiny       | 5M     | 4 GB  | 6 h           | $5        |
-| Small      | 40M    | 8 GB  | 12 h          | $10       |
-| Base       | 125M   | 16 GB | 24 h          | $25       |
-| Large      | 350M   | 24 GB | 48 h          | $50       |
+- **Yes:** the controlled experiment in `ml/benchmark_tokenizer.py`, the
+  test suite in `tests/`, the data-acquisition pipeline, the pinned
+  dependency set, the `RESEARCH.md` writeup, and the `colab_runner.ipynb`
+  one-click reproduction.  These constitute a reproducible, honest
+  preliminary finding.
+- **Not yet:** Scope 2 (larger corpus, more languages, downstream LM
+  perplexity) and Scope 3 (community-validated evaluation).  The roadmap is
+  in `RESEARCH.md` §7.
 
 ---
 
-## Languages supported
+## Languages supported (current registry)
 
-- **Kikongo** (kik) - Mandombe script
-- **Yoruba** (yor) - Tonal
-- **Swahili** (swa)
-- **Zulu** (zul)
-- **Xhosa** (xho)
-- **Wolof** (wol)
-- **Akan** (aka)
-- **Luganda** (lug)
-- **Kinyarwanda** (kin)
-- **Kikuyu** (kik)
+From `ml/east-african-tokenizer-config.py`:
 
-See `docs/east-african-bantu-languages.md` for the full data-source map.
+| Code | Language        | Family                | Tier |
+|------|-----------------|-----------------------|------|
+| swa  | Swahili         | Northeast Coast Bantu | 1    |
+| kik  | Kikuyu          | Thagicu Bantu         | 1    |
+| lug  | Luganda         | Luganda Bantu         | 1    |
+| kin  | Kinyarwanda     | Rwanda-Rundi Bantu    | 1    |
+| kam  | Kamba           | Central Bantu         | 2    |
+| mer  | Meru            | Thagicu Bantu         | 2    |
+| bxk  | Lubukusu        | Luhya Bantu           | 2    |
+| luo  | Dholuo          | Nilotic               | 2    |
+| suk  | Sukuma          | Sukuma-Nyamwezi Bantu | 2    |
+| nym  | Nyamwezi        | Sukuma-Nyamwezi Bantu | 3    |
+| nyn  | Runyankore      | Luganda Bantu         | 2    |
+| ttj  | Tooro           | Luganda Bantu         | 3    |
+| run  | Kirundi         | Rwanda-Rundi Bantu    | 2    |
+| emb  | Embu            | Thagicu Bantu         | 3    |
+| haya | Haya            | Haya-Jita Bantu       | 3    |
+
+---
+
+## Documentation map
+
+- **[`RESEARCH.md`](RESEARCH.md)** - the research writeup (start here)
+- `guide.md` - step-by-step Colab walkthrough
+- `docs/ethical-guidelines.md` - the ethical framework
+- `docs/east-african-bantu-languages.md` - per-language data sources
+- `PROJECT_STRUCTURE.md` - the original 5-stage pipeline diagram
+- `contributing.md` - how to contribute
 
 ---
 
 ## Ethics
 
-- Informed consent is **required** before any data collection
-- Communities retain **data ownership** and sovereignty
-- **Attribution** to contributors is mandatory
-- Use is **non-commercial by default**
-- See `docs/ethical-guidelines.md` for the full framework
-
----
-
-## Documentation
-
-- `guide.md` - Step-by-step implementation guide (incl. Google Colab setup)
-- `PROJECT_STRUCTURE.md` - ML pipeline structure and phases
-- `docs/ethical-guidelines.md` - Ethical framework
-- `docs/east-african-bantu-languages.md` - East African Bantu data sources
-- `contributing.md` - How to contribute
-- `hadithi-app/README.md` - Hadithi app specifics
-
----
-
-## Contributing
-
-See `contributing.md` for contribution guidelines, and `docs/ethical-guidelines.md` before any data-related work.
+See `docs/ethical-guidelines.md` for the full framework.  Key commitments:
+informed consent before any community-data collection, community data
+sovereignty, mandatory attribution, non-commercial use by default, and
+community-validated evaluation before any production deployment.
 
 ---
 
 ## License
 
-MIT License
+MIT
 
 ---
 
 ## Citation
 
 ```bibtex
-@software{nguzo_ai_2026,
-  title={Nguzo.ai: African Native Oral Language Model & Language Barrier Bridge},
+@software{nguzo_ai_scope1_2025,
+  title={Nguzo.ai Scope 1: A controlled experiment on linguistically-informed BPE for Swahili},
   author={Muchiri, Tim},
-  year={2026},
+  year={2025},
   url={https://github.com/MuchiriTimothyGitau/nguzo.ai}
 }
 ```
-
----
-
-## Contact
-
-- GitHub: [@MuchiriTimothyGitau](https://github.com/MuchiriTimothyGitau)
-- Project: [nguzo.ai](https://nguzo.ai)
-
----
-
-*Built for African communities, by African communities, with respect for African knowledge systems.*

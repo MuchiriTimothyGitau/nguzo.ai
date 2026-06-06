@@ -1,0 +1,29 @@
+# Core Python ML stack for Nguzo.ai research artifacts
+# Tested on Python 3.13.1 on Windows 10.
+# Versions are pinned to the latest binary wheels available on PyPI as of
+# 2025-06.  Older Python versions (3.10-3.12) are also supported by these
+# versions.
+
+# ---- Core scientific stack (used in ml/ modules and tests) ----
+numpy==2.2.5
+pandas==2.3.3
+regex==2024.11.6
+tqdm==4.67.1
+
+# ---- Tokenization (BPE trainer for the tokenizer-benchmark experiment) ----
+tokenizers==0.21.1
+sentencepiece==0.2.1
+
+# ---- Testing ----
+pytest==9.0.2
+
+# ---- Colab-only stack (kept here as a comment; uncomment when running on Colab) ----
+# torch>=2.0.0
+# transformers>=4.35.0
+# datasets>=2.14.0
+# openai-whisper>=20231117
+# librosa>=0.10.0
+# soundfile>=0.12.0
+# jupyter>=1.0.0
+# matplotlib>=3.8.0
+# seaborn>=0.13.0
