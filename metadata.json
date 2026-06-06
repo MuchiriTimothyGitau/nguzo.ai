@@ -1,0 +1,6 @@
+{
+  "name": "Nguzo.ai Platform",
+  "description": "Interactive Multilingual Translation Panel, Spaced Repetition Suite, Clinical Phrase Portal & Compute Node Workspace for Nguzo.ai.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
