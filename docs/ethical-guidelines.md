@@ -101,5 +101,5 @@ This AI model was trained on oral traditions from:
 ## Contact
 
 For ethical concerns or questions:
-- ethics@african-native-oral-llm.org
+- muchiritimothygitau@gmail.com
 - Community review board: [community-specific contacts]

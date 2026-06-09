@@ -371,7 +371,7 @@ Kaggle also provides free GPU:
 
 - Issues: GitHub Issues
 - Discussions: GitHub Discussions
-- Email: project@african-native-oral-llm.org
+- Email: muchiritimothygitau@gmail.com
 
 ---
 

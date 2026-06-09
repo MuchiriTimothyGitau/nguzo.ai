@@ -187,6 +187,15 @@ community-validated evaluation before any production deployment.
 
 ---
 
+## Contact
+
+- **Technical questions**: open a GitHub Discussion or Issue
+- **Ethical concerns**: see [`docs/ethical-guidelines.md`](docs/ethical-guidelines.md)
+- **General / everything else**: email **muchiritimothygitau@gmail.com**
+- **Author**: [@MuchiriTimothyGitau](https://github.com/MuchiriTimothyGitau)
+
+---
+
 ## License
 
 MIT

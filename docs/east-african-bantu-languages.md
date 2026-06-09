@@ -591,4 +591,4 @@ East African Bantu languages share phonological features requiring:
 
 **Last Updated**: May 2026  
 **Contributors**: African Native Oral LLM Research Team  
-**Contact**: research@african-native-oral-llm.org
+**Contact**: muchiritimothygitau@gmail.com

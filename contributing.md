@@ -147,7 +147,7 @@ All contributions must comply with our ethical framework:
 ### Communication Channels
 - GitHub Issues: Bug reports, feature requests
 - GitHub Discussions: General questions
-- Email: ethics@african-native-oral-llm.org (ethical concerns)
+- Email: muchiritimothygitau@gmail.com (all concerns, including ethical)
 - Community meetings: Monthly (announced in Discussions)
 
 ## Recognition
@@ -162,7 +162,7 @@ Contributors will be:
 
 - Technical: Open a GitHub Discussion
 - Ethical: See [ethical guidelines](docs/ethical_guidelines.md)
-- General: Email project@african-native-oral-llm.org
+- General: Email muchiritimothygitau@gmail.com
 
 ---
 

@@ -100,5 +100,6 @@ MIT License - See LICENSE file
 
 ## Contact
 
-- GitHub: [@muchiriTimdev](https://github.com/muchiriTimdev)
+- Email: muchiritimothygitau@gmail.com
+- GitHub: [@MuchiriTimothyGitau](https://github.com/MuchiriTimothyGitau)
 - Project: [nguzo.ai](https://nguzo.ai)
